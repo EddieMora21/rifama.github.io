@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifa CRUD</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center">Rifa - 15 septiembre</h1>
+        
+        <!-- Cuadrícula de números -->
+        <div class="row mt-4">
+            <div id="numeros-grid" class="col-12">
+                <div class="row row-cols-10 g-3">
+                    <!-- Los números se generarán dinámicamente aquí -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información del Participante a la derecha del formulario -->
+        <div id="info-recuadro" class="col-md-6">
+            <h3>Información del Participante</h3>
+            <div class="info-row">
+                <div class="info-col d-flex ">
+                    <p class="pe-3" id="info-nombre">Nombre: <span></span></p>
+                    <p class="pe-3" id="info-apellido">Apellido: <span></span></p>
+                </div>
+                <div class="info-col d-flex ">
+                    <p class="pe-3" id="info-numero">Número: <span></span></p>
+                    <p class="pe-3" id="info-pago">Pagado: <span></span></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Formulario de registro -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h3>Registrar / Actualizar Participante</h3>
+                <form id="registro-form">
+                    <div class="mb-3">
+                        <label for="numero" class="form-label">Número</label>
+                        <input type="number" id="numero" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" id="nombre" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellido" class="form-label">Apellido</label>
+                        <input type="text" id="apellido" class="form-control" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" id="pago" class="form-check-input">
+                        <label for="pago" class="form-check-label">Pagado</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="agregar-btn">Agregar</button>
+                    <button type="submit" class="btn btn-warning" id="actualizar-btn" style="display: none;">Actualizar</button>
+                    <button type="button" class="btn btn-danger" id="eliminar-btn" style="display: none;">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>
