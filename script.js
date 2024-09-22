@@ -3,6 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 // Configuración de Firebase
+// Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDtwPpezdUHupb9I5K1LIWpSzzjczPk02s",
     authDomain: "rifa-5e4d3.firebaseapp.com",
@@ -73,70 +74,68 @@ function resetForm() {
 document.getElementById("registro-form").addEventListener("submit", function(event) {
     event.preventDefault();
 
-    const numero = document.getElementById("numero").value;
+    // Obtener los números separados por comas
+    const numeros = document.getElementById("numero").value.split(',').map(num => num.trim());
     const nombre = document.getElementById("nombre").value;
     const apellido = document.getElementById("apellido").value;
     const pago = document.getElementById("pago").checked;
 
-    if (isUpdating) { // si estamos actualizando
-        setDoc(doc(db, "rifa", numero), {
-            nombre: nombre,
-            apellido: apellido,
-            pago: pago
-        }, { merge: true })
-        .then(() => {
-            Swal.fire({
-                icon: 'success',
-                title: 'Participante actualizado!',
-                text: `El participante con número ${numero} ha sido actualizado exitosamente.`,
-                showConfirmButton: false,
-                timer: 2000
-            });
+    const operaciones = numeros.map(numero => {
+        if (isUpdating) { // si estamos actualizando
+            return setDoc(doc(db, "rifa", numero), {
+                nombre: nombre,
+                apellido: apellido,
+                pago: pago
+            }, { merge: true })
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Participante actualizado!',
+                    text: `El participante con número ${numero} ha sido actualizado exitosamente.`,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
 
-            // Cambiar color del botón correspondiente al número
-            const numeroBtn = Array.from(numerosGrid.getElementsByTagName("button")).find(btn => btn.textContent === numero);
-            if (numeroBtn) {
-                numeroBtn.classList.remove("btn-secondary", "btn-warning", "btn-success");
-                numeroBtn.classList.add(pago ? "btn-success" : "btn-warning");
-            }
-
-            resetForm();
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Ocurrió un error al actualizar el participante.',
+                // Cambiar color del botón correspondiente al número
+                const numeroBtn = Array.from(numerosGrid.getElementsByTagName("button")).find(btn => btn.textContent === numero);
+                if (numeroBtn) {
+                    numeroBtn.classList.remove("btn-secondary", "btn-warning", "btn-success");
+                    numeroBtn.classList.add(pago ? "btn-success" : "btn-warning");
+                }
+                resetForm();
             });
-            console.error("Error al actualizar participante: ", error);
+        } else { // si estamos agregando un nuevo participante
+            return setDoc(doc(db, "rifa", numero), {
+                nombre: nombre,
+                apellido: apellido,
+                pago: pago
+            })
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Participante registrado!',
+                    text: `El participante con número ${numero} ha sido registrado exitosamente.`,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+
+                resetForm();
+            });
+        }
+    });
+
+    // Ejecutar todas las operaciones (guardar los números)
+    Promise.all(operaciones)
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al procesar la operación.',
         });
-    } else { // si estamos agregando un nuevo participante
-        setDoc(doc(db, "rifa", numero), {
-            nombre: nombre,
-            apellido: apellido,
-            pago: pago
-        })
-        .then(() => {
-            Swal.fire({
-                icon: 'success',
-                title: 'Participante registrado!',
-                text: `El participante con número ${numero} ha sido registrado exitosamente.`,
-                showConfirmButton: false,
-                timer: 2000
-            });
-
-            resetForm();
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Ocurrió un error al registrar el participante.',
-            });
-            console.error("Error al registrar participante: ", error);
-        });
-    }
+        console.error("Error al procesar la operación: ", error);
+    });
 });
+
 
 // Eliminar participante
 document.getElementById("eliminar-btn").addEventListener("click", function() {
